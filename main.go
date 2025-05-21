@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"encoding/csv"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -14,7 +15,15 @@ type Question struct {
 }
 
 func main() {
-	file, err := os.Open("problem.csv")
+	filePath := flag.String(
+		"file",
+		"problem.csv",
+		"a path to a csv file with question and anwser",
+	)
+
+	flag.Parse()
+
+	file, err := os.Open(*filePath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -25,7 +34,8 @@ func main() {
 
 	fmt.Printf("Total of questions: %d\n\n", len(records))
 
-	score := 0
+	correctScore := 0
+	wrongScore := 0
 
 	for _, q := range records {
 		fmt.Printf("Question: %s\n", q[0])
@@ -33,12 +43,12 @@ func main() {
 		scanner.Scan()
 
 		if scanner.Text() == q[1] {
-			fmt.Println("Nice done! You got it right.")
-			score++
+			correctScore++
 		} else {
-			fmt.Println("Unfortunilly you wrong on that.")
+			wrongScore++
 		}
 	}
 
-	fmt.Printf("Your score points are: %d\n", score)
+	fmt.Printf("\nHow many you was correct: %d\n", correctScore)
+	fmt.Printf("How many you got wrong: %d\n", wrongScore)
 }
