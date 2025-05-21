@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-type Question struct {
+type Problem struct {
 	question string
 	anwser   string
 }
@@ -38,6 +38,17 @@ func loadFile(filePathname string) [][]string {
   return records
 }
 
+func parseRecords(records [][]string) []Problem {
+  problems := make([]Problem, len(records))
+  for i, p := range records {
+    problems[i] = Problem{
+      question: p[0],
+      anwser: validateInput(p[1]),
+    }
+  }
+  return problems
+}
+
 func validateInput(input string) string {
   return strings.TrimSpace(strings.ToLower(input))
 }
@@ -52,10 +63,11 @@ func main() {
 
 	flag.Parse()
 
-	questionsData := loadFile(*filePath)
+	data := loadFile(*filePath)
+  problems := parseRecords(data)
 	scanner := bufio.NewScanner(os.Stdin)
 
-  questionsLength := len(questionsData)
+  questionsLength := len(problems)
 	timer := time.NewTimer(time.Duration(*timeLimit) * time.Second)
 
   welcome(questionsLength)
@@ -70,14 +82,13 @@ func main() {
     os.Exit(0)
 	}()
 
-	for _, q := range questionsData {
-		fmt.Printf("Question: %s = ", q[0])
+	for _, p := range problems {
+		fmt.Printf("Question: %s = ", p.question)
 		scanner.Scan()
 
     userAnwser := validateInput(scanner.Text())
-    questionAnwser := validateInput(q[1])
 
-		if userAnwser == questionAnwser {
+		if userAnwser == p.anwser {
 			score++
 		}
 	}
