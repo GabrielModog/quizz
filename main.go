@@ -7,12 +7,17 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"time"
 )
 
 type Question struct {
 	question string
 	anwser   string
+}
+
+func validateInput(input string) string {
+  return strings.TrimSpace(strings.ToLower(input))
 }
 
 func main() {
@@ -46,7 +51,6 @@ func main() {
 	fmt.Printf("=======================================\n\n")
 
 	correctScore := 0
-	wrongScore := 0
 
 	defer timer.Stop()
 
@@ -61,10 +65,11 @@ func main() {
 
 		scanner.Scan()
 
-		if scanner.Text() == q[1] {
+    userAnwser := validateInput(scanner.Text())
+    questionAnwser := validateInput(q[1])
+
+		if userAnwser == questionAnwser {
 			correctScore++
-		} else {
-			wrongScore++
 		}
 	}
 
