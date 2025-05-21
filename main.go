@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 )
 
 type Question struct {
@@ -18,8 +19,9 @@ func main() {
 	filePath := flag.String(
 		"file",
 		"problem.csv",
-		"a path to a csv file with question and anwser",
+		"path to a csv file with question and anwser",
 	)
+	timeLimit := flag.Int("limit", 30, "time limit to anwser all the questions")
 
 	flag.Parse()
 
@@ -27,15 +29,31 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer file.Close()
 
 	reader := csv.NewReader(file)
 	records, _ := reader.ReadAll()
 	scanner := bufio.NewScanner(os.Stdin)
 
-	fmt.Printf("Total of questions: %d\n\n", len(records))
+	timer := time.NewTimer(time.Duration(*timeLimit) * time.Second)
+
+	fmt.Printf("\n=======================================\n")
+	fmt.Printf(
+		"\tLAZY QUIZ GAME\t\n\tby @gabrielmodog\n\tusage: -h help\n")
+	fmt.Printf("=======================================\n")
+	fmt.Printf("- total of questions loaded: %d\t\n", len(records))
+	fmt.Printf("=======================================\n\n")
 
 	correctScore := 0
 	wrongScore := 0
+
+	defer timer.Stop()
+
+	go func() {
+		<-timer.C
+		fmt.Printf("\n\nTime expired, pal. Your score is: %d\n", correctScore)
+		os.Exit(0)
+	}()
 
 	for _, q := range records {
 		fmt.Printf("Question: %s\n", q[0])
