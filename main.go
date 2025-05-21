@@ -35,13 +35,14 @@ func main() {
 	records, _ := reader.ReadAll()
 	scanner := bufio.NewScanner(os.Stdin)
 
+  recordsLength := len(records)
 	timer := time.NewTimer(time.Duration(*timeLimit) * time.Second)
 
 	fmt.Printf("\n=======================================\n")
 	fmt.Printf(
 		"\tLAZY QUIZ GAME\t\n\tby @gabrielmodog\n\tusage: -h help\n")
 	fmt.Printf("=======================================\n")
-	fmt.Printf("- total of questions loaded: %d\t\n", len(records))
+	fmt.Printf("- total of questions loaded: %d\t\n", recordsLength)
 	fmt.Printf("=======================================\n\n")
 
 	correctScore := 0
@@ -51,8 +52,8 @@ func main() {
 
 	go func() {
 		<-timer.C
-		fmt.Printf("\n\nTime expired, pal. Your score is: %d\n", correctScore)
-		os.Exit(0)
+		fmt.Printf("\n\nTime expired, pal.\nYour score is: %d out of %d\n", correctScore, recordsLength)
+    os.Exit(0)
 	}()
 
 	for _, q := range records {
@@ -67,6 +68,5 @@ func main() {
 		}
 	}
 
-	fmt.Printf("\nHow many you was correct: %d\n", correctScore)
-	fmt.Printf("How many you got wrong: %d\n", wrongScore)
+  fmt.Printf("Your score is: %d out of %d\n", correctScore, recordsLength)
 }
