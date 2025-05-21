@@ -16,6 +16,28 @@ type Question struct {
 	anwser   string
 }
 
+func welcome(howManyQuestions int) {
+	fmt.Printf("\n=======================================\n")
+	fmt.Printf(
+		"\tLAZY QUIZ GAME\t\n\tby @gabrielmodog\n\tusage: -h help\n")
+	fmt.Printf("=======================================\n")
+	fmt.Printf("- total of questions loaded: %d\t\n", howManyQuestions)
+	fmt.Printf("=======================================\n\n")
+}
+
+func loadFile(filePathname string) [][]string {
+	file, err := os.Open(filePathname)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+	records, _ := reader.ReadAll()
+
+  return records
+}
+
 func validateInput(input string) string {
   return strings.TrimSpace(strings.ToLower(input))
 }
@@ -30,25 +52,13 @@ func main() {
 
 	flag.Parse()
 
-	file, err := os.Open(*filePath)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-
-	reader := csv.NewReader(file)
-	records, _ := reader.ReadAll()
+	questionsData := loadFile(*filePath)
 	scanner := bufio.NewScanner(os.Stdin)
 
-  recordsLength := len(records)
+  questionsLength := len(questionsData)
 	timer := time.NewTimer(time.Duration(*timeLimit) * time.Second)
 
-	fmt.Printf("\n=======================================\n")
-	fmt.Printf(
-		"\tLAZY QUIZ GAME\t\n\tby @gabrielmodog\n\tusage: -h help\n")
-	fmt.Printf("=======================================\n")
-	fmt.Printf("- total of questions loaded: %d\t\n", recordsLength)
-	fmt.Printf("=======================================\n\n")
+  welcome(questionsLength)
 
 	score := 0
 
@@ -56,13 +66,12 @@ func main() {
 
 	go func() {
 		<-timer.C
-		fmt.Printf("\n\nTime expired, pal.\nYour score is: %d out of %d\n", score, recordsLength)
+		fmt.Printf("\n\nTime expired, pal.\nYour score is: %d out of %d\n", score, questionsLength)
     os.Exit(0)
 	}()
 
-	for _, q := range records {
-		fmt.Printf("Question: %s\n", q[0])
-
+	for _, q := range questionsData {
+		fmt.Printf("Question: %s = ", q[0])
 		scanner.Scan()
 
     userAnwser := validateInput(scanner.Text())
@@ -73,5 +82,5 @@ func main() {
 		}
 	}
 
-  fmt.Printf("Your score is: %d out of %d\n", score, recordsLength)
+  fmt.Printf("Your score is: %d out of %d\n", score, questionsLength)
 }
