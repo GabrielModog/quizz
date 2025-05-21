@@ -67,10 +67,10 @@ func main() {
   problems := parseRecords(data)
 	scanner := bufio.NewScanner(os.Stdin)
 
-  questionsLength := len(problems)
+  problemsAmount := len(problems)
 	timer := time.NewTimer(time.Duration(*timeLimit) * time.Second)
 
-  welcome(questionsLength)
+  welcome(problemsAmount)
 
 	score := 0
 
@@ -78,7 +78,7 @@ func main() {
 
 	go func() {
 		<-timer.C
-		fmt.Printf("\n\nTime expired, pal.\nYour score is: %d out of %d\n", score, questionsLength)
+		fmt.Printf("\n\nTime expired, pal.\nYour score is: %d out of %d\n", score, problemsAmount)
     os.Exit(0)
 	}()
 
@@ -93,5 +93,5 @@ func main() {
 		}
 	}
 
-  fmt.Printf("Your score is: %d out of %d\n", score, questionsLength)
+  fmt.Printf("Your score is: %d out of %d\n", score, problemsAmount)
 }
