@@ -50,13 +50,13 @@ func main() {
 	fmt.Printf("- total of questions loaded: %d\t\n", recordsLength)
 	fmt.Printf("=======================================\n\n")
 
-	correctScore := 0
+	score := 0
 
 	defer timer.Stop()
 
 	go func() {
 		<-timer.C
-		fmt.Printf("\n\nTime expired, pal.\nYour score is: %d out of %d\n", correctScore, recordsLength)
+		fmt.Printf("\n\nTime expired, pal.\nYour score is: %d out of %d\n", score, recordsLength)
     os.Exit(0)
 	}()
 
@@ -69,9 +69,9 @@ func main() {
     questionAnwser := validateInput(q[1])
 
 		if userAnwser == questionAnwser {
-			correctScore++
+			score++
 		}
 	}
 
-  fmt.Printf("Your score is: %d out of %d\n", correctScore, recordsLength)
+  fmt.Printf("Your score is: %d out of %d\n", score, recordsLength)
 }
