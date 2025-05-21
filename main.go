@@ -1,10 +1,11 @@
 package main
 
 import (
-	csv "encoding/csv"
+	"bufio"
+	"encoding/csv"
 	"fmt"
-	log "log"
-	os "os"
+	"log"
+	"os"
 )
 
 type Question struct {
@@ -19,7 +20,25 @@ func main() {
 	}
 
 	reader := csv.NewReader(file)
-	reacords, _ := reader.ReadAll()
+	records, _ := reader.ReadAll()
+	scanner := bufio.NewScanner(os.Stdin)
 
-	fmt.Println(reacords)
+	fmt.Printf("Total of questions: %d\n\n", len(records))
+
+	score := 0
+
+	for _, q := range records {
+		fmt.Printf("Question: %s\n", q[0])
+
+		scanner.Scan()
+
+		if scanner.Text() == q[1] {
+			fmt.Println("Nice done! You got it right.")
+			score++
+		} else {
+			fmt.Println("Unfortunilly you wrong on that.")
+		}
+	}
+
+	fmt.Printf("Your score points are: %d\n", score)
 }
